@@ -1,17 +1,14 @@
-biome,group,area_mha,value_per_ha,global_flow_bn,has_data,note
-Open ocean,Marine,33200,252,8381,true,
-Estuaries,Marine,180,22832,4110,true,
-Seagrass/algae beds,Marine,200,19004,3801,true,
-Coral reefs,Marine,62,6075,375,true,
-Shelf,Marine,2660,1610,4283,true,
-Tropical forest,Terrestrial,1900,2007,3813,true,
-Temperate/boreal forest,Terrestrial,2955,302,894,true,
-Grass/rangelands,Terrestrial,3898,232,906,true,
-Tidal marsh/mangroves,Terrestrial,165,9990,1648,true,
-Swamps/floodplains,Terrestrial,165,19580,3231,true,
-Lakes/rivers,Terrestrial,200,8498,1700,true,
-Desert,Terrestrial,1925,,,false,No valuation studies found by the authors
-Tundra,Terrestrial,743,,,false,No valuation studies found by the authors
-Ice/rock,Terrestrial,1640,,,false,No valuation studies found by the authors
-Cropland,Terrestrial,1400,92,128,true,
-Urban,Terrestrial,332,0,0,true,Services negligible or not estimated in the paper; treated as 0
+key,name,emoji,value_per_ha,global_flow_bn
+estuary,Estuary,🏖️,22832,4110
+swamp,Swamp / floodplain,🌿,19580,3231
+seagrass,Seagrass meadow,🌱,19004,3801
+mangrove,Mangroves / tidal marsh,🌴,9990,1648
+lake,Lake / river,🏞️,8498,1700
+coral,Coral reef,🪸,6075,375
+shelf,Continental shelf,🐚,1610,4283
+tropical_forest,Tropical forest,🌳,2007,3813
+boreal_forest,Northern (boreal) forest,🌲,302,894
+open_ocean,Open ocean,🌊,252,8381
+grassland,Grassland,🐄,232,906
+cropland,Farm field,🌾,92,128
+urban,City,🏙️,0,0
