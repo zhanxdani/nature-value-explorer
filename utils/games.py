@@ -53,15 +53,17 @@ def money_about(x: float) -> str:
 
 
 def money_short(x: float) -> str:
-    """Compact money: $0, $915, $9k, $30k, $0.66M, $1.96M, $19.8M."""
+    """Compact money: $0, $915, $1.9k, $9.2k, $30k, $0.66M, $1.96M, $19.8M."""
     sign = "-" if x < 0 else ""
     a = abs(x)
     if a >= 10e6:
         return f"{sign}${a / 1e6:.1f}M"
     if a >= 500_000:
         return f"{sign}${a / 1e6:.2f}M"
-    if a >= 1_000:
+    if a >= 10_000:
         return f"{sign}${round_half_up(a / 1e3):.0f}k"
+    if a >= 1_000:
+        return f"{sign}${round_half_up(a / 1e3, 0.1):g}k"
     return f"{sign}${round_half_up(a):.0f}"
 
 

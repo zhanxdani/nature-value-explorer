@@ -113,8 +113,8 @@ GUESS = {
     "slider": "Your guess: nature's work per year (trillion $)",
     "reveal": "Reveal",
     "your_guess": "Your guess",
-    "nature": "Nature ≈ ${avg}T ({low}–{high})",
-    "economy": "World economy ≈ ${gnp}T",
+    "nature": "Nature ({low}–{high})",
+    "economy": "World economy",
     "result": "Nature's work was worth almost 2 world economies!",
     "learn": "In 1997, 13 scientists led by Robert Costanza put a price on the services of all the world's "
              "ecosystems, using more than 100 earlier studies. They called $33 trillion a minimum: many "
