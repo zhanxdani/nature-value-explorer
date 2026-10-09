@@ -1,0 +1,18 @@
+service_id,service,global_value_bn,simple_group
+1,Gas regulation,1341,Outside markets
+2,Climate regulation,684,Outside markets
+3,Disturbance regulation,1779,Outside markets
+4,Water regulation,1115,Outside markets
+5,Water supply,1692,Outside markets
+6,Erosion control,576,Outside markets
+7,Soil formation,53,Outside markets
+8,Nutrient cycling,17075,Outside markets
+9,Waste treatment,2277,Outside markets
+10,Pollination,117,Outside markets
+11,Biological control,417,Outside markets
+12,Habitat/refugia,124,Outside markets
+13,Food production,1386,Goods we buy and sell
+14,Raw materials,721,Goods we buy and sell
+15,Genetic resources,79,Goods we buy and sell
+16,Recreation,815,Outside markets
+17,Cultural,3015,Outside markets
