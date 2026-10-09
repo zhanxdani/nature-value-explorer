@@ -1,101 +1,109 @@
-"""Smoke tests: every page renders without exceptions."""
+"""Smoke tests: every page renders through app.py, with and without ?presenter=1."""
 
 from pathlib import Path
 
 import pytest
 from streamlit.testing.v1 import AppTest
 
+from content import texts as T
+from utils import ui
+
 ROOT = Path(__file__).resolve().parent.parent
-PAGES = sorted((ROOT / "pages").glob("*.py"))
+APP = str(ROOT / "app.py")
+ALL_PAGES = list(ui.PAGES.values()) + [ui.GLOSSARY_PAGE, ui.SOURCES_PAGE, ui.SHARE_PAGE]
 TIMEOUT = 60
 
 
-def run(path, **state) -> AppTest:
-    at = AppTest.from_file(str(path), default_timeout=TIMEOUT)
-    for key, value in state.items():
-        at.session_state[key] = value
+def open_page(page: str, presenter: bool = False) -> AppTest:
+    at = AppTest.from_file(APP, default_timeout=TIMEOUT)
+    if presenter:
+        at.query_params["presenter"] = "1"
     at.run()
+    at.switch_page(page).run()
     assert not at.exception, at.exception
     return at
 
 
-def test_all_pages_found():
-    assert len(PAGES) == 7
+def test_every_page_file_exists():
+    for page in ALL_PAGES:
+        assert (ROOT / page).is_file(), page
 
 
-@pytest.mark.parametrize("page", PAGES, ids=lambda p: p.stem)
-@pytest.mark.parametrize("today", [False, True], ids=["1994", "today"])
-def test_page_renders(page, today):
-    run(page, today_dollars=today)
+@pytest.mark.parametrize("page", ALL_PAGES)
+@pytest.mark.parametrize("presenter", [False, True], ids=["student", "presenter"])
+def test_page_renders(page, presenter):
+    open_page(page, presenter)
 
 
-@pytest.mark.parametrize("presenter", [False, True], ids=["normal", "presenter"])
-def test_app_renders(presenter):
-    run(ROOT / "app.py", presenter=presenter)
+@pytest.mark.parametrize("n", range(1, T.LAST_CHAPTER + 1))
+def test_speaker_notes_only_for_presenter(n):
+    label = T.COMMON["speaker_notes"]
+    student = open_page(ui.PAGES[n])
+    presenter = open_page(ui.PAGES[n], presenter=True)
+    assert not any(e.label == label for e in student.expander)
+    assert any(e.label == label for e in presenter.expander)
 
 
-def test_guess_reveal():
-    at = run(ROOT / "pages" / "1_guess.py")
-    at.button[0].click().run()
+def test_morning_counter():
+    at = open_page(ui.PAGES[1])
+    at.pills(key="morning_items").set_value(["☕ Coffee", "🍎 Apple"]).run()
     assert not at.exception
-    assert any("1.8" in m.value for m in at.metric)
+    assert any("2" in m.value and "before lunch" in m.value for m in at.markdown)
 
 
-def test_converter_default_loss():
-    at = run(ROOT / "pages" / "2_converter.py")
-    loss = next(m for m in at.metric if m.label == "Loss per year")
-    assert loss.value == "$1.915 bn"
+def test_higher_lower_full_game():
+    at = open_page(ui.PAGES[2])
+    for _ in T.HIGHER_LOWER:
+        at.button(key="big_hl_b").click().run()  # the second option is always the right one
+        assert not at.exception
+        next(b for b in at.button if b.label in (T.CH2["next_round"], T.CH2["see_score"])).click().run()
+    assert any("5 of 5" in m.value for m in at.markdown)
 
 
-def test_tipping_point_near_threshold():
-    at = run(ROOT / "pages" / "4_tipping_point.py")
-    at.select_slider[0].set_value(22).run()
+def test_build_or_keep_trade():
+    at = open_page(ui.PAGES[3])
+    at.pills(key="trade_nature").set_value("tropical_forest").run()
+    at.pills(key="trade_build").set_value("cropland").run()
+    next(b for b in at.button if b.label == T.CH3["build"]).click().run()
     assert not at.exception
-    assert len(at.error) == 1
+    text = " ".join(m.value for m in at.markdown)
+    assert "2,000" in text and "92" in text
 
 
-def test_value_lens_investor_preset():
-    at = run(ROOT / "pages" / "5_value_lens.py")
-    next(b for b in at.button if b.label == "Investor").click().run()
+def test_tipping_point_collapse_and_restart():
+    at = open_page(ui.PAGES[4])
+    for _ in range(20):
+        clear = [b for b in at.button if b.label == T.CH4["clear"]]
+        if not clear:
+            break
+        clear[0].click().run()
     assert not at.exception
-    assert any("Winner for Investor: Oil palm plantation" in m.value for m in at.markdown)
+    assert at.session_state["tip_game"]["status"] == "collapsed"
+    next(b for b in at.button if b.label == T.CH4["play_again"]).click().run()
+    assert at.session_state["tip_game"]["status"] == "playing"
+    assert at.session_state["tip_game"]["cleared"] == 0
 
 
-def test_deal_builder_no_deal_for_temperate_forest():
-    at = run(ROOT / "pages" / "6_deal_builder.py")
-    at.selectbox[0].set_value("Temperate/boreal forest").run()
+def test_save_the_forest_offer():
+    at = open_page(ui.PAGES[6])
+    at.pills(key="ana_offer").set_value(300).run()
     assert not at.exception
-    assert len(at.warning) == 1
+    assert len(at.success) >= 1
 
 
 def test_quiz_full_run():
-    at = run(ROOT / "pages" / "7_quiz.py")
-    answers = [
-        "$33T",
-        "Nutrient cycling",
-        "Estuaries",
-        "Many services are missing and thresholds are ignored",
-        "The role of culture and indigenous & local knowledge",
-        "Regulating, material, non-material",
-    ]
-    for answer in answers:
-        at.radio[0].set_value(answer).run()
-        at.button[0].click().run()  # Check
+    at = open_page(ui.PAGES[7])
+    for q in T.QUIZ:
+        at.radio[0].set_value(q["answer"]).run()
+        next(b for b in at.button if b.label == T.CH7["check"]).click().run()
         assert at.success
-        at.button[0].click().run()  # Next
+        next(b for b in at.button if b.label in (T.CH7["next"], T.CH7["finish"])).click().run()
     assert not at.exception
-    assert any("6 / 6" in m.value for m in at.markdown)
+    assert any("5 / 5" in m.value for m in at.markdown)
 
 
-def test_presenter_mode_hides_notes_and_sources():
-    normal = run(ROOT / "pages" / "2_converter.py")
-    presenter = run(ROOT / "pages" / "2_converter.py", presenter=True)
-    assert any(e.label == "Speaker notes" for e in normal.expander)
-    assert not any(e.label == "Speaker notes" for e in presenter.expander)
-    assert len(presenter.caption) < len(normal.caption)
-
-
-def test_today_dollars_scales_amounts():
-    at = run(ROOT / "pages" / "2_converter.py", today_dollars=True)
-    loss = next(m for m in at.metric if m.label == "Loss per year")
-    assert loss.value == "$4.06 bn"  # 1.915 bn x 2.12
+def test_next_marks_chapter_done():
+    at = open_page(ui.PAGES[1])
+    at.button(key="next_1").click().run()
+    assert not at.exception
+    assert 1 in at.session_state["done"]
