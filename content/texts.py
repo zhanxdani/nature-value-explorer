@@ -420,8 +420,7 @@ SOURCES = {
         "*Nature* 387, 253–260. [doi:10.1038/387253a0](https://doi.org/10.1038/387253a0)",
         "Díaz, S. et al. (2018). Assessing nature's contributions to people. *Science* 359, 270–272. "
         "[doi:10.1126/science.aap8826](https://doi.org/10.1126/science.aap8826)",
-        "IPBES (2016). Assessment report on pollinators, pollination and food production. "
-        "[doi:10.5281/zenodo.3402856](https://doi.org/10.5281/zenodo.3402856)",
+        "IPBES (2016). Assessment report on pollinators, pollination and food production.",
         "Ferrario, F. et al. (2014). The effectiveness of coral reefs for coastal hazard risk reduction and "
         "adaptation. *Nature Communications* 5, 3794. "
         "[doi:10.1038/ncomms4794](https://doi.org/10.1038/ncomms4794)",
