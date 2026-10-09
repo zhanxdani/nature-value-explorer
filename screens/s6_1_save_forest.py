@@ -77,10 +77,10 @@ def render() -> None:
     status = out["status"]
     ui.html(_strip(profit, value, offer, top))
 
+    results = X["results"]
     if out["no_deal_possible"]:
         ui.result_line(X["no_win_win"], "warning")
-    results = X["results"]
-    if status == "reject":
+    elif status == "reject":
         ui.result_line(results["reject"].format(value=games.money_about(value)), "error")
     elif status == "cheapest":
         ui.result_line(results["cheapest"], "success")

@@ -118,7 +118,8 @@ html, body { overflow-x: hidden; }
 
 /* ---- sliders: big thumb, space above and below ---- */
 [data-testid="stSlider"] { padding: 2px 12px 0 12px; }
-[data-testid="stSlider"] [role="slider"] { width: 28px !important; height: 28px !important; }
+[data-testid="stSlider"] div:has(> div > input[type="range"]) {
+    width: 28px !important; height: 28px !important; }
 
 /* ---- zone strip (6.1) ---- */
 .strip-wrap { position: relative; padding: 3px 0; }
