@@ -1,14 +1,11 @@
-key,name,emoji,value_per_ha,global_flow_bn
-estuary,Estuary,🏖️,22832,4110
-swamp,Swamp / floodplain,🌿,19580,3231
-seagrass,Seagrass meadow,🌱,19004,3801
-mangrove,Mangroves / tidal marsh,🌴,9990,1648
-lake,Lake / river,🏞️,8498,1700
-coral,Coral reef,🪸,6075,375
-shelf,Continental shelf,🐚,1610,4283
-tropical_forest,Tropical forest,🌳,2007,3813
-boreal_forest,Northern (boreal) forest,🌲,302,894
-open_ocean,Open ocean,🌊,252,8381
-grassland,Grassland,🐄,232,906
-cropland,Farm field,🌾,92,128
-urban,City,🏙️,0,0
+key,name,image,fallback,value_per_ha,global_flow_bn
+estuary,Estuary,biomes/estuary,🏖️,22832,4110
+swamp,Swamp / floodplain,scenes/wetland_0,🌿,19580,3231
+mangrove,Mangroves,biomes/mangroves,🌴,9990,1648
+lake,Lake / river,biomes/lake_river,🏞️,8498,1700
+coral,Coral reef,biomes/coral_reef,🪸,6075,375
+tropical_forest,Tropical forest,scenes/forest_0,🌳,2007,3813
+boreal_forest,Northern forest,biomes/boreal_forest,🌲,302,894
+open_ocean,Open ocean,biomes/open_ocean,🌊,252,8381
+grassland,Grassland,biomes/grassland,🐄,232,906
+cropland,Farm field,biomes/farm_field,🌾,92,128

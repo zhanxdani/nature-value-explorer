@@ -1,5 +1,6 @@
-streamlit>=1.46
+# Streamlit is pinned because the CSS relies on internal data-testid attributes.
+streamlit==1.65.*
 pandas
-plotly
 qrcode[pil]
 pytest
+playwright
