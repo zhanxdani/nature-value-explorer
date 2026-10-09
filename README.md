@@ -1,31 +1,26 @@
-# 🌿 Nature Value Explorer
+# 🌍 Nature Value Explorer
 
-An interactive Streamlit app for our group presentation on
-**biodiversity ↔ ecosystem functioning/services**.
+A 5-minute interactive journey through **ecosystem services**, made by Group 9 for our
+presentation on *biodiversity ↔ ecosystem functioning/services*.
 
 Guiding question: *From services to contributions: valuing nature in a human world.*
 
-Six one-minute interactive pages plus a quiz. Each page has one main control, one big number
-or chart, and one takeaway. It is built for the projector and also works on phones (open
-it from the QR code in the sidebar).
+The app is **mobile-first**: during the talk we show a big QR code, classmates scan it and go
+through the chapters on their own phones while each presenter leads their chapter. No formulas,
+no sliders — just short texts, buttons and mini-games.
 
-| # | Page | Section | What it shows |
-|---|------|---------|---------------|
-| 1 | Guess the value | Introduction | Your guess vs. Costanza's $33T/yr vs. world GNP |
-| 2 | Land converter | Calculating value | Services lost when nature becomes cropland or city |
-| 3 | The future | Calculating value | How the discount rate changes the value of a hectare |
-| 4 | Tipping point | Hypothesis | Marginal value rising sharply near a threshold *(illustrative model)* |
-| 5 | Value lens | Hypothesis | Whose values count changes which land use "wins" *(illustrative model)* |
-| 6 | Deal builder | Solutions | Payments for Ecosystem Services: is there a win-win deal? |
-| 7 | Quiz | — | 6 questions on both papers |
+| # | Chapter | Presenter | Mini-game |
+|---|---------|-----------|-----------|
+| 0 | 🏠 Welcome | — | Start button and chapter list |
+| 1 | ☕ Nature in your morning | Julie | Tap what you used this morning |
+| 2 | 💰 What is nature worth? | Goda | Guess the price · Which is worth more? |
+| 3 | 🚜 Build or keep? | Goda | Make the trade |
+| 4 | 💥 The tipping point game | Munkhtulga | How much can you take? |
+| 5 | 🌉 From services to contributions | Munkhtulga / 2D | Good or bad? · Nature or culture? · Who decides? |
+| 6 | 🛠️ Solutions | 2D | Save the forest · Six real solutions · What can you do? |
+| 7 | 🏆 Quiz & finish | — | 5 easy questions and a badge |
 
-## Screenshots
-
-_Add screenshots here after deploying._
-
-| Guess the value | Tipping point | Deal builder |
-|---|---|---|
-| ![](docs/screenshot-guess.png) | ![](docs/screenshot-tipping.png) | ![](docs/screenshot-deal.png) |
+Extra pages in the menu: 📖 Glossary, 📚 Sources, 📱 Share (big QR code for the projector).
 
 ## Run locally
 
@@ -47,32 +42,39 @@ pytest
 1. Push this repository to a **public** GitHub repository.
 2. Go to <https://share.streamlit.io>, sign in with GitHub, click **Create app** →
    **Deploy a public app from GitHub**.
-3. Pick the repository, branch `main`, main file `app.py`. Optionally choose a custom
-   URL (e.g. `nature-value-explorer.streamlit.app`). Click **Deploy**.
-4. Copy the app URL into `APP_URL` in [`config.py`](config.py), commit and push.
-   The QR code in the sidebar (**Open on your phone**) now works.
+3. Pick the repository, branch `main`, main file `app.py`, and optionally a custom URL
+   (e.g. `nature-value-explorer.streamlit.app`). Click **Deploy**.
+4. Set `APP_URL` in [`config.py`](config.py) to the app address, commit and push.
+   The 📱 Share page now shows the QR code. Streamlit redeploys automatically after each push.
 
-## Settings in the sidebar
+## For presenters
 
-- **Show in today's dollars**: all amounts are in 1994 US$, as in the paper. The toggle
-  multiplies them by `CPI_FACTOR` (2.12, CPI-U 1994 → 2024). Update it in `config.py`.
-- **Presenter mode**: bigger fonts for the projector; hides speaker notes and source lines.
+- Open the app with **`?presenter=1`** at the end of the address
+  (e.g. `https://nature-value-explorer.streamlit.app/?presenter=1`) to see 🎤 speaker notes at
+  the top of each chapter. Students never see them.
+- Put the 📱 **Share** page on the projector so everyone can scan the QR code.
+
+## Editing texts
+
+All interface texts live in [`content/texts.py`](content/texts.py). Change wording there
+without touching the app logic. Numbers come from [`data/biomes.csv`](data/biomes.csv),
+[`data/lost_services.csv`](data/lost_services.csv) and [`config.py`](config.py).
 
 ## Project structure
 
 ```
-app.py              navigation, sidebar, global CSS, QR code
-config.py           constants (totals, CPI factor, app URL)
-data/biomes.csv     Costanza et al. 1997, Table 2: value per hectare by biome
-data/services.csv   Costanza et al. 1997, Table 2: global value by service
-utils/calc.py       pure calculation functions (tested)
-utils/ui.py         shared UI helpers
-pages/              one file per page
-tests/              pytest: calculations + page smoke tests
+app.py                  page config, global CSS, navigation, presenter flag
+config.py               totals, app URL
+.streamlit/config.toml  light theme, minimal toolbar
+data/                   Costanza et al. 1997, Table 2 (values per hectare per year, 1994 US$)
+content/texts.py        all interface texts (English)
+utils/games.py          pure game logic (tested)
+utils/ui.py             shared components and mobile CSS
+pages/                  one file per chapter + glossary, sources, share
+tests/                  pytest: game logic + page smoke tests
 ```
 
-Every number on screen comes from `data/*.csv` or `config.py`, or is calculated from them.
-Pages 4, 5 and 6 contain illustrative models, and they are labelled in the app.
+The games in Chapters 4–6 are models that illustrate ideas from the papers; they are not data.
 
 ## Sources
 

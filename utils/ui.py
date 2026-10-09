@@ -68,8 +68,8 @@ html, body { overflow-x: hidden; }
 .stat-track { height: 22px; background: #EEEEEE; border-radius: 11px; overflow: hidden; margin-top: 0.25rem; }
 .stat-fill { height: 100%; border-radius: 11px; transition: width 0.3s; }
 .forest-grid {
-    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.2rem; max-width: 340px;
-    margin: 0.5rem auto; text-align: center; font-size: clamp(2.1rem, 11vw, 3rem); line-height: 1.25;
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.1rem; max-width: 260px;
+    margin: 0.5rem auto; text-align: center; font-size: clamp(1.7rem, 9vw, 2.4rem); line-height: 1.2;
 }
 .strip-wrap { position: relative; padding-top: 1.9rem; margin: 0.5rem 0 0.25rem 0; }
 .strip { display: flex; height: 30px; border-radius: 10px; overflow: hidden; }
