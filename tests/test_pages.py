@@ -85,3 +85,17 @@ def test_quiz_full_run():
         at.button[0].click().run()  # Next
     assert not at.exception
     assert any("6 / 6" in m.value for m in at.markdown)
+
+
+def test_presenter_mode_hides_notes_and_sources():
+    normal = run(ROOT / "pages" / "2_converter.py")
+    presenter = run(ROOT / "pages" / "2_converter.py", presenter=True)
+    assert any(e.label == "Speaker notes" for e in normal.expander)
+    assert not any(e.label == "Speaker notes" for e in presenter.expander)
+    assert len(presenter.caption) < len(normal.caption)
+
+
+def test_today_dollars_scales_amounts():
+    at = run(ROOT / "pages" / "2_converter.py", today_dollars=True)
+    loss = next(m for m in at.metric if m.label == "Loss per year")
+    assert loss.value == "$4.06 bn"  # 1.915 bn x 2.12

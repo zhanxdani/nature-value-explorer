@@ -24,6 +24,7 @@ r_pct = c2.slider(
     max_value=R_MAX,
     value=config.DEFAULT_DISCOUNT * 100,
     step=R_STEP,
+    format="%.1f%%",
 )
 r = r_pct / 100
 a = calc.biome_value(biomes, biome)
@@ -74,12 +75,13 @@ fig.update_layout(
 )
 ui.chart(fig)
 
-compare_to = R_MAX if r_pct < R_MAX else 1.0
+# Compare the chosen rate with r = 1% (or 1% with the maximum when r = 1%)
+compare_to = 1.0 if r_pct != 1.0 else R_MAX
 low_r, high_r = min(r_pct, compare_to), max(r_pct, compare_to)
 times = calc.perpetuity(a, low_r / 100) / calc.perpetuity(a, high_r / 100)
 st.markdown(
-    f'<p class="big-text">At r = {low_r:g}% this hectare is worth {times:.0f}× more '
-    f"than at r = {high_r:g}%</p>",
+    f'<div class="big-text">At r = {low_r:g}% this hectare is worth {times:.3g}× more '
+    f"than at r = {high_r:g}%</div>",
     unsafe_allow_html=True,
 )
 

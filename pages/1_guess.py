@@ -36,17 +36,29 @@ if st.session_state.guess_revealed:
             x=["Your guess", "Nature", "World GNP 1997"],
             y=[guess, avg, gnp],
             marker_color=[ui.BLUE, ui.AQUA, ui.GREY],
+            text=[f"{guess:.0f}", f"{avg:.1f}", f"{gnp:.0f}"],
+            textposition="inside",
+            insidetextanchor="start",
+            hovertemplate="%{x}: %{y:.1f} trillion<extra></extra>",
+        )
+    )
+    # Range of the estimate, drawn only on the Nature bar
+    fig.add_trace(
+        go.Scatter(
+            x=["Nature"],
+            y=[avg],
+            mode="markers",
+            marker=dict(size=1, opacity=0),
             error_y=dict(
                 type="data",
                 symmetric=False,
-                array=[0, high - avg, 0],
-                arrayminus=[0, avg - low, 0],
-                thickness=2,
-                width=10,
+                array=[high - avg],
+                arrayminus=[avg - low],
+                thickness=3,
+                width=14,
+                color=ui.GREY,
             ),
-            text=[f"{guess:.0f}", f"{avg:.1f}", f"{gnp:.0f}"],
-            textposition="inside",
-            hovertemplate="%{x}: %{y:.1f} trillion<extra></extra>",
+            hovertemplate=f"Range: {low:.0f}–{high:.0f} trillion<extra></extra>",
         )
     )
     fig.update_layout(

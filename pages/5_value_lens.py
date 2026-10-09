@@ -51,6 +51,7 @@ for col, crit, key in zip(wcols, calc.LENS_CRITERIA, KEYS):
         min_value=0.0,
         max_value=10.0,
         step=0.5,
+        format="%.1f",
         key=key,
         on_change=mark_custom,
     )
@@ -62,7 +63,7 @@ scores = calc.lens_scores(weights)
 winner = scores.index[0]
 
 st.markdown(
-    f'<p class="big-text">Winner for {st.session_state.lens_role}: {winner}</p>',
+    f'<div class="big-text">Winner for {st.session_state.lens_role}: {winner}</div>',
     unsafe_allow_html=True,
 )
 

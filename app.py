@@ -13,6 +13,9 @@ st.set_page_config(page_title="Nature Value Explorer", page_icon="🌿", layout=
 BASE_CSS = """
 <style>
 [data-testid="stMetricValue"] { font-size: 2.5rem; font-weight: 700; }
+[data-testid="stMetricLabel"], [data-testid="stMetricLabel"] * {
+    white-space: normal !important; overflow: visible !important; text-overflow: clip !important;
+}
 .illustrative-badge {
     display: inline-block; padding: 0.25rem 0.75rem; border-radius: 999px;
     background: #fab219; color: #0b0b0b; font-weight: 700; font-size: 0.9rem;

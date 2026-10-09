@@ -51,11 +51,11 @@ if q - q_min <= 3:
 qs = list(range(q_min + 1, 101))
 ys = [calc.tipping_value(v0, x, q_min) * f for x in qs]
 q2, q5 = calc.tipping_zone_edges(q_min)
-x_left, x_right = 100, q_min - 3
+x_left, x_right = 101, q_min - 3
 
 fig = go.Figure()
 for x0, x1, color in [
-    (100, q2, "rgba(12,163,12,0.12)"),
+    (x_left, q2, "rgba(12,163,12,0.12)"),
     (q2, q5, "rgba(250,178,25,0.18)"),
     (q5, x_right, "rgba(208,59,59,0.14)"),
 ]:

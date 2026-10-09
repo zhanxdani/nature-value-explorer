@@ -117,7 +117,7 @@ if idx < len(QUESTIONS):
 else:
     score = st.session_state.quiz_score
     st.markdown(
-        f'<p class="big-text">Your score: {score} / {len(QUESTIONS)}</p>',
+        f'<div class="big-text">Your score: {score} / {len(QUESTIONS)}</div>',
         unsafe_allow_html=True,
     )
     if score >= PASS_SCORE:

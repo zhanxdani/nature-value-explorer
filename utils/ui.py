@@ -60,11 +60,8 @@ def currency_label() -> str:
 # ---------------------------------------------------------------- formatting
 
 def _short(v: float) -> str:
-    if v >= 100:
-        return f"{v:.1f}"
-    if v >= 10:
-        return f"{v:.2f}"
-    return f"{v:.3f}"
+    """Four significant digits: 1.915, 29.44, 191.5, 92."""
+    return f"{v:.4g}"
 
 
 def money(x: float, convert: bool = True) -> str:
