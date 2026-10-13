@@ -99,6 +99,41 @@ def test_screen_fits(server, page, sid):
     assert_fits(page, sid)
 
 
+LAYOUT_JS = """() => {
+  const box = s => { const e = document.querySelector(s); if (!e) return null;
+    const b = e.getBoundingClientRect(); return {x: b.x, w: b.width, h: b.height, cy: b.y + b.height / 2}; };
+  const back = box('.st-key-nav_back button');
+  const next = box('.st-key-nav_next button') || box('.st-key-nav_next_off button');
+  const nav = document.querySelector('.st-key-navbar');
+  const block = document.querySelector('[data-testid="stMainBlockContainer"]');
+  const limit = nav ? nav.getBoundingClientRect().top : innerHeight;
+  const rects = [...block.querySelectorAll('[data-testid="stElementContainer"]')]
+    .filter(e => !(nav && nav.contains(e)))
+    .map(e => e.getBoundingClientRect())
+    .filter(r => r.width > 0 && r.height > 0);
+  const top = Math.min(...rects.map(r => r.top));
+  const bottom = Math.max(...rects.map(r => r.bottom));
+  return {vw: innerWidth, back, next, above: top, below: limit - bottom};
+}"""
+
+
+@pytest.mark.parametrize("sid", screens.ALL_IDS)
+def test_screen_centered(server, page, sid):
+    """Round ← / → are centered and thumb-sized; the screen sits in the middle of the free space."""
+    page.goto(f"{server}/?s={sid}")
+    wait_ready(page)
+    m = page.evaluate(LAYOUT_JS)
+    back, nxt = m["back"], m["next"]
+    if back:
+        group_center = (back["x"] + nxt["x"] + nxt["w"]) / 2
+        assert abs(group_center - m["vw"] / 2) <= 2, f"{sid}: arrows off-center by {group_center - m['vw'] / 2:.0f}px"
+        assert min(back["w"], back["h"], nxt["w"], nxt["h"]) >= 56, f"{sid}: arrow buttons smaller than 56px"
+        assert abs(back["cy"] - nxt["cy"]) < 1, f"{sid}: arrows are not in one row"
+    if measure(page)["over"] <= 2:
+        assert abs(m["above"] - m["below"]) <= 16, (
+            f"{sid}: not vertically centered (space above {m['above']:.0f}px, below {m['below']:.0f}px)")
+
+
 @pytest.mark.parametrize("state", list(STATES))
 def test_state_fits(server, page, state):
     sid, steps = STATES[state]

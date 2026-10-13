@@ -27,9 +27,21 @@ GREY = "#BDBDBD"
 CSS = """
 <style>
 /* ---- page frame: no header, tight spacing, room for the fixed nav bar ---- */
+:root { --nav-h: 72px; }
 [data-testid="stHeader"], [data-testid="stToolbar"], [data-testid="stDecoration"] { display: none !important; }
+[data-testid="stMain"] { padding: 0 !important; }
+/* The screen is centered horizontally (max 640px) and vertically in the free space above the nav bar. */
 [data-testid="stMainBlockContainer"], .block-container {
-    padding: 0.5rem 0.75rem 76px 0.75rem !important; max-width: 640px;
+    padding: 0.5rem 0.75rem calc(var(--nav-h) + 8px) 0.75rem !important; max-width: 640px;
+    margin-left: auto !important; margin-right: auto !important;
+    min-height: 100vh; min-height: 100dvh; height: auto !important;
+    display: flex !important; flex-direction: column !important; flex-shrink: 0 !important;
+    box-sizing: border-box !important;
+}
+/* "Safe" vertical centering: auto margins center the screen, but a screen taller than the phone
+   starts at the top and scrolls instead of being cut off at the top. */
+[data-testid="stMainBlockContainer"] > *, .block-container > * {
+    margin-top: auto !important; margin-bottom: auto !important; width: 100%;
 }
 [data-testid="stMain"] [data-testid="stVerticalBlock"] { gap: 0.3rem; }
 [data-testid="stMarkdownContainer"] { margin-bottom: 0 !important; }
@@ -134,14 +146,33 @@ html, body { overflow-x: hidden; }
 [class*="st-key-row"] { flex-wrap: nowrap !important; }
 [class*="st-key-row"] > div { min-width: 0; flex: 1 1 0; }
 
-/* ---- fixed bottom navigation ---- */
+/* ---- fixed bottom navigation: round ← and → grouped in the center of the screen ---- */
 .st-key-navbar {
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100; background: #FFFFFF;
-    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.08); flex-wrap: nowrap !important;
-    padding: 6px max(12px, calc((100vw - 640px) / 2 + 12px)) calc(6px + env(safe-area-inset-bottom));
+    position: fixed !important; bottom: 0; left: 0; right: 0; z-index: 100; background: #FFFFFF;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+    flex-wrap: nowrap !important; justify-content: center !important; align-items: center !important;
+    gap: 16px !important; margin: 0 !important; box-sizing: border-box !important;
+    min-height: var(--nav-h);
+    padding: 8px 16px calc(8px + env(safe-area-inset-bottom, 0px)) !important;
 }
-.st-key-navbar [data-testid="stElementContainer"]:has(.nav-dots) { flex: 1 1 auto; }
-.nav-dots { text-align: center; color: #2E7D32; letter-spacing: 3px; font-size: 0.9rem; }
+.st-key-navbar > * { flex: 0 0 auto !important; width: auto !important; min-width: 0 !important; }
+.st-key-navbar [data-testid="stElementContainer"]:has(.nav-dots) { min-width: 56px !important; }
+.st-key-nav_back, .st-key-nav_next, .st-key-nav_next_off { width: 56px !important; flex: 0 0 56px !important; }
+.st-key-nav_back button, .st-key-nav_next button, .st-key-nav_next_off button {
+    width: 56px !important; height: 56px !important; min-width: 56px !important; min-height: 56px !important;
+    padding: 0 !important; border-radius: 50% !important;
+    display: flex !important; align-items: center !important; justify-content: center !important;
+    touch-action: manipulation; -webkit-tap-highlight-color: transparent;
+}
+.st-key-nav_back button { background: #FFFFFF !important; border: 2px solid #2E7D32 !important; color: #2E7D32 !important; }
+.st-key-nav_next button { border: 2px solid #2E7D32 !important; box-shadow: 0 4px 12px rgba(46, 125, 50, 0.35); }
+.st-key-nav_back button p, .st-key-nav_next button p { margin: 0 !important; line-height: 1 !important; }
+.st-key-nav_back button [data-testid="stIconMaterial"],
+.st-key-nav_next button [data-testid="stIconMaterial"] { font-size: 28px !important; }
+.st-key-nav_back button:active, .st-key-nav_next button:active { transform: scale(0.94); }
+.st-key-nav_back button:disabled, .st-key-nav_next button:disabled { opacity: 0.3 !important; box-shadow: none !important; }
+.st-key-nav_next_off { visibility: hidden !important; }  /* keeps ← in place when there is no next screen */
+.nav-dots { text-align: center; color: #2E7D32; letter-spacing: 3px; font-size: 0.9rem; white-space: nowrap; }
 
 /* ---- tiles (1.1 items, 6.4 actions) ---- */
 [class*="st-key-tile_"] button {
@@ -408,18 +439,25 @@ def approval_row(people: list[str], approvals: list[float], images: dict[str, st
 
 
 def nav_bar(sid: str, show_next: bool = True) -> None:
+    """Fixed bottom bar: round ← and → in the center of the screen, chapter dots between them.
+
+    The group always stays centered: a missing previous screen greys ← out, `show_next=False`
+    greys → out, and on the last screen an invisible placeholder keeps ← in place.
+    """
     prev, nxt = screens.neighbour(sid, -1), screens.neighbour(sid, 1)
     ch = screens.chapter_of(sid)
     dots = ""
     if ch is not None:
         dots = "".join("●" if s == sid else "○" for s in screens.chapter_screens(ch))
     with st.container(key="navbar", horizontal=True, vertical_alignment="center"):
-        st.button(T.COMMON["back"], key="nav_back", icon=":material/arrow_back:", on_click=go,
-                  args=(prev,), disabled=prev is None)
+        st.button(":material/arrow_back:", key="nav_back", on_click=go, args=(prev,),
+                  disabled=prev is None)
         html(f'<div class="nav-dots">{dots}</div>')
-        if show_next and nxt:
-            st.button(T.COMMON["next"], key="nav_next", type="primary", icon=":material/arrow_forward:",
-                      icon_position="right", on_click=go, args=(nxt,))
+        if nxt:
+            st.button(":material/arrow_forward:", key="nav_next", type="primary", on_click=go,
+                      args=(nxt,), disabled=not show_next)
+        else:
+            st.button(":material/arrow_forward:", key="nav_next_off", disabled=True)
 
 
 def qr_png(url: str) -> bytes:
